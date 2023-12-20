@@ -1,0 +1,43 @@
+﻿@using StoreAppMVC.Models.Orders;
+@model OrderModel
+
+@{
+    ViewData["Title"] = "Редактировать заказ";
+    Layout = "_Layout";
+}
+
+<div class="modal-content">
+    <div class="modal-header">
+        <button class="btn-close" data-bs-dismiss="modal" area-hidden="true"></button>
+    </div>
+    <h4 class="text-center">Товар</h4>
+    <div class="modal-body">
+        <form asp-controller="Orders" asp-action="EditOrder" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="Number" class="form-label">Номер:</label>
+                <input asp-for="Number" type="text" class="form-control" id="Number" value="@Model.Number" required />
+                <span asp-validation-for="Number" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label for="Date" class="form-label">Дата заказа:</label>
+                <input asp-for="Date" type="date" class="form-control" name="Date" value="@Model.Date" required />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label for="Date" class="form-label">Время заказа:</label>
+                <input asp-for="Date" type="time" class="form-control" name="Time" value="@Model.Date.TimeOfDay" required />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label for="ProviderId" class="form-label">Выберите магазин:</label>
+                <select asp-for="ProviderId" asp-items="@Model.ProviderList"></select>
+            </div>
+            <div>
+                <input asp-for="Id" type="hidden" />
+            </div>
+            <input type="submit" class="btn btn-primary m-1" value="Редактировать заказ" />
+            <a class="btn btn-primary m-1" role="button" asp-controller="Orders" asp-action="GetOrdersByFilter">Отмена</a>
+        </form>
+    </div>
+</div>
+

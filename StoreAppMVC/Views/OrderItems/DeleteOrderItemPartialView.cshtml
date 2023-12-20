@@ -1,0 +1,20 @@
+﻿@using StoreAppMVC.Models.OrderItems;
+@model OrderItemModel;
+
+<div class="modal-content">
+    <div class="modal-header">
+        <button class="btn-close" data-bs-dismiss="modal" area-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div>Удалить товар?</div>
+        <div>
+            <form asp-controller="OrderItems" asp-action="DeleteOrderItem" method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <input type="hidden" name="orderId" value="@Model.OrderId" />
+                <button type="submit" class="btn btn-outline-danger">Удалить</button>
+            </form>
+            <a class="btn btn-outline-info" asp-controller="OrderItems" asp-action="GetOrderItemsByFilter"
+               asp-route-id="@Model.OrderId">Отмена</a>
+        </div>
+    </div>
+</div>

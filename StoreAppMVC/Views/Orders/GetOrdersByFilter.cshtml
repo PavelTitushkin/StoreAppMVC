@@ -1,0 +1,106 @@
+﻿@using Newtonsoft.Json;
+@using StoreApp_Core.DTOs;
+@using System.Text;
+@model ICollection<OrderDTO>
+
+@{
+    ViewData["Title"] = "Заказы";
+    Layout = "_layout";
+}
+
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
+<h2 class="text-center">Заказы</h2>
+<div class="text-center">
+    <form asp-controller="Orders" asp-action="GetOrdersByFilter" method="get">
+        <div>
+            Дата начала поиска: <input type="date" name="SearchDateStart" value="@DateTime.UtcNow" />
+            Дата окончания поиска: <input type="date" name="SearchDateEnd" />
+        </div>
+        <div class="mb-3">
+            <label for="filter">Сортировать по:</label>
+            <select name="filter">
+                <option value="dateStart">Дате: с начала</option>
+                <option value="dateEnd">Дате: с конца</option>
+                <option value="numberFirst">Номеру: от А до Я</option>
+                <option value="numberLast">Номеру: от Я до А</option>
+                <option value="providerFirst">Магазины: от А до Я</option>
+                <option value="providerLast">Магазины: от Я до А</option>
+            </select>
+        </div>
+        <input type="submit" value="Применить" />
+    </form>
+</div>
+<div>
+    @if (Model.Count > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Дата
+                    </th>
+                    <th>
+                        Номер заказа
+                    </th>
+                    <th>
+                        Магазин
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+
+                    var orderDtoJson = JsonConvert.SerializeObject(item);
+                    var orderDtoBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(orderDtoJson));
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Date)
+                        </td>
+                        <td>
+                            <a class="link" asp-controller="OrderItems" asp-action="GetOrderItemsByFilter"
+                               asp-route-id="@item.Id"
+                               asp-route-dtoJson="@orderDtoBase64">@item.Number</a>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProviderDTO.Name)
+                        </td>
+                        <td>
+                            <a class="btn btn-outline-secondary" asp-controller="Orders" asp-action="EditOrderPartialView"
+                            asp-route-id="@item.Id" 
+                            asp-route-number="@item.Number" 
+                            asp-route-date="@item.Date" 
+                            asp-route-providerId="@item.ProviderDTOId">Редактировать</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-outline-danger" asp-controller="Orders" asp-action="DeleteOrderPartialView"
+                               asp-route-dtoJson="@orderDtoBase64">Удалить</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class=" mb-1">Заказы отсутствуют</p>
+    }
+    <p>
+        <a class="btn btn-outline-success" asp-controller="Orders" asp-action="CreateOrder">Добавить заказ</a>
+    </p>
+</div>
+
+
+@section Scripts
+    {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/js/modalWindow.js" asp-append-version="true"></script>
+}

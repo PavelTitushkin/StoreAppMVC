@@ -1,0 +1,21 @@
+﻿@using StoreAppMVC.Models.Providers;
+@model ProviderModel;
+
+@{
+    ViewData["Title"] = "Добавить магазин";
+    Layout = "_Layout";
+}
+
+<div>
+    <h2>Добавление магазина</h2>
+
+    <form asp-controller="Providers" asp-action="CreateProvider" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="Name" class="form-label">Название:</label>
+            <input asp-for="Name" type="text" class="form-control" id="Name" value="@Model.Name" required />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <input type="submit" class="btn btn-primary m-1" value="Добавить магазин" />
+        <a class="btn btn-primary m-1" role="button" asp-controller="Providers" asp-action="GetAllProviders">Отмена</a>
+    </form>
+</div>

@@ -1,0 +1,151 @@
+﻿@using Newtonsoft.Json;
+@using StoreApp_Core.DTOs;
+@using System.Text;
+@model OrderDTO
+
+@{
+    ViewData["Title"] = "Детали заказа";
+    Layout = "_layout";
+}
+
+@{
+    var orderJson = JsonConvert.SerializeObject(Model);
+    var orderBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(orderJson));
+}
+
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
+<h2 class="text-center">Заказ</h2>
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Дата
+                </th>
+                <th>
+                    Номер заказа
+                </th>
+                <th>
+                    Магазин
+                </th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.Number)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.ProviderDTO.Name)
+                </td>
+                <td>
+                    <a class="btn btn-outline-secondary" asp-controller="Orders" asp-action="CreateOrEditOrder"
+                    asp-route-id="@Model.Id"
+                    asp-route-number="@Model.Number" asp-route-date="@Model.Date"
+                    asp-route-providerId="@Model.ProviderDTOId">Редактировать</a>
+                </td>
+                <td>
+                    <a class="btn btn-outline-danger" asp-controller="Orders" asp-action="DeleteOrderPartialView"
+                       asp-route-dtoJson="@orderBase64">Удалить</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="border border-1 border-secondary">
+        @if (Model.OrderItemDTOs.Count > 0)
+        {
+            <div class="text-center">
+                <form asp-controller="OrderItems" asp-action="GetOrderItemsByFilter" method="get">
+                    <div class="mb-3">
+                        <label for="filter">Сортировать по:</label>
+                        <select name="filter">
+                            <option value="nameOrderItemFirst">Названию: от А до Я</option>
+                            <option value="nameOrderItemLast">Названию: от Я до А</option>
+                            <option value="quantityFirst">Количеству: меньше</option>
+                            <option value="quantityLast">Количеству: больше</option>
+                            <option value="unitFirst">Ед. езмерения: от А до Я</option>
+                            <option value="unitLast">Ед. езмерения: от Я до А</option>
+                        </select>
+                    </div>
+                    <input asp-for="Id" type="hidden" />
+                    <input type="submit" value="Применить" />
+                </form>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Товар
+                        </th>
+                        <th>
+                            Количество
+                        </th>
+                        <th>
+                            Еденица измерения
+                        </th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderItemDTOs)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Quantity)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Unit)
+                            </td>
+                            <td>
+                                <a class="btn btn-outline-secondary" asp-controller="OrderItems" asp-action="EditOrderItemPartialView"
+                                   asp-route-id="@item.Id"
+                                   asp-route-name="@item.Name"
+                                   asp-route-quantity="@item.Quantity"
+                                   asp-route-unit="@item.Unit"
+                                   asp-route-orderId="@item.OrderId">Редактировать товар</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-outline-danger" asp-controller="OrderItems" asp-action="DeleteOrderItemPartialView"
+                                   asp-route-id="@item.Id"
+                                   asp-route-orderId="@item.OrderId">Удалить</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class=" mb-1">Товары отсутствуют</p>
+        }
+        <p>
+            <a class="btn btn-outline-success" asp-controller="OrderItems" asp-action="CreateOrderItem"
+            asp-route-orderId="@Model.Id">Добавить товар</a>
+        </p>
+
+    </div>
+</div>
+
+
+@section Scripts
+    {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/js/modalWindow.js" asp-append-version="true"></script>
+}

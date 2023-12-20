@@ -1,0 +1,22 @@
+﻿@using StoreApp_Core.DTOs;
+@model OrderDTO;
+
+<div class="modal-content">
+    <div class="modal-header">
+        <button class="btn-close" data-bs-dismiss="modal" area-hidden="true"></button>
+    </div>
+    <h4 class="text-center">Заказ</h4>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+            <dt>Номер:</dt>
+            <dd>@Html.DisplayFor(model => model.Number)</dd>
+            <dt>Дата:</dt>
+            <dd>@Html.DisplayFor(model => model.Date)</dd>
+        </dl>
+        <form asp-controller="Orders" asp-action="DeleteOrder" method="post">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <button type="submit" class="btn btn-outline-danger">Удалить</button>
+            <a class="btn btn-outline-info" asp-controller="Orders" asp-action="GetOrdersByFilter">Отмена</a>
+        </form>
+    </div>
+</div>
